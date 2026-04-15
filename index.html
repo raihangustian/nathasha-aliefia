@@ -1,0 +1,214 @@
+<!DOCTYPE html>
+<html lang="id">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>A Little Surprise For You</title>
+    <style>
+        :root {
+            --color-env: #ffb3c1;
+            --color-env2: #ff8fa3;
+            --color-flap: #ff758f;
+            --color-letter: #ffffff;
+            --color-text: #c9184a;
+        }
+
+        body {
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            height: 100vh;
+            background-color: #fff0f3;
+            margin: 0;
+            overflow: hidden;
+            font-family: 'Arial', sans-serif;
+        }
+
+        .container {
+            position: relative;
+            top: 50px;
+        }
+
+        /* Amplop Utama */
+        .envelope-wrapper {
+            position: relative;
+            width: 300px;
+            height: 200px;
+            background-color: var(--color-env);
+            border-radius: 0 0 10px 10px;
+            box-shadow: 0 10px 30px rgba(0,0,0,0.1);
+            cursor: pointer;
+            z-index: 10;
+        }
+
+        /* Penutup Atas */
+        .flap {
+            position: absolute;
+            top: 0;
+            left: 0;
+            border-left: 150px solid transparent;
+            border-right: 150px solid transparent;
+            border-top: 110px solid var(--color-flap);
+            transform-origin: top;
+            transition: transform 0.4s ease, z-index 0.2s;
+            z-index: 30;
+        }
+
+        /* Bagian Depan Amplop */
+        .pocket {
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 0;
+            height: 0;
+            border-left: 150px solid var(--color-env2);
+            border-right: 150px solid var(--color-env2);
+            border-bottom: 100px solid var(--color-env2);
+            border-top: 100px solid transparent;
+            border-radius: 0 0 10px 10px;
+            z-index: 20;
+        }
+
+        /* Kertas Surat */
+        .letter {
+            position: absolute;
+            bottom: 0;
+            left: 10%;
+            width: 80%;
+            height: 80%;
+            background: var(--color-letter);
+            border-radius: 5px;
+            padding: 20px;
+            box-sizing: border-box;
+            transition: transform 0.6s ease;
+            z-index: 15;
+            text-align: center;
+            box-shadow: 0 5px 15px rgba(0,0,0,0.05);
+        }
+
+        .letter p {
+            font-size: 14px;
+            color: var(--color-text);
+            line-height: 1.6;
+            margin-top: 10px;
+        }
+
+        /* Animasi Buka */
+        .container.open .flap {
+            transform: rotateX(180deg);
+            z-index: 5;
+        }
+
+        .container.open .letter {
+            transform: translateY(-130px);
+        }
+
+        /* Ikon Segel Hati */
+        .heart {
+            position: absolute;
+            top: 50%;
+            left: 50%;
+            transform: translate(-50%, -50%);
+            width: 40px;
+            height: 40px;
+            background: #ff4d6d;
+            z-index: 40;
+            transition: opacity 0.3s;
+            clip-path: path('M12 21.35l-1.45-1.32C5.4 15.36 2 12.28 2 8.5 2 5.42 4.42 3 7.5 3c1.74 0 3.41.81 4.5 2.09C13.09 3.81 14.76 3 16.5 3 19.58 3 22 5.42 22 8.5c0 3.78-3.4 6.86-8.55 11.54L12 21.35z');
+        }
+
+        .container.open .heart {
+            opacity: 0;
+        }
+
+        .hint {
+            text-align: center;
+            margin-top: 160px;
+            color: var(--color-flap);
+            font-size: 12px;
+            letter-spacing: 1px;
+        }
+
+        /* --- CSS untuk Partikel Animasi --- */
+        .particle {
+            position: absolute;
+            pointer-events: none; /* Supaya tidak bisa diklik */
+            opacity: 0;
+            z-index: 60;
+            animation: explode 1s ease-out forwards;
+        }
+
+        @keyframes explode {
+            0% {
+                transform: translate(0, 0) scale(1);
+                opacity: 1;
+            }
+            100% {
+                /* Bergerak ke arah acak */
+                transform: translate(var(--dx), var(--dy)) scale(0.5);
+                opacity: 0;
+            }
+        }
+    </style>
+</head>
+<body>
+
+    <div class="container" id="mainContainer">
+        <div class="envelope-wrapper" onclick="handleEnvelopeClick()">
+            <div class="flap"></div>
+            <div class="pocket"></div>
+            <div class="letter">
+                <p><strong>hai sayang,</strong></p>
+                <p style="font-size: 3px;">di dunia yang bising ini, kamu adalah ketenanganku. di tengah ambisi dan rencana, kamu adalah tujuanku. makasih sudah jadi pilar di saat aku hampir tumbang, dan jadi alasan kenapa aku harus selalu menang. tetap di sampingku ya? kita raih sukses ini sama-sama selamanya wopyuuuu❤️</p>
+            </div>
+            <div class="heart"></div>
+        </div>
+        <div class="hint">KLIK UNTUK MEMBUKA</div>
+    </div>
+
+    <script>
+        const container = document.getElementById('mainContainer');
+        const particleShapes = ['🌸', '💖', '❤️', '🌹'];
+
+        function handleEnvelopeClick() {
+            if (!container.classList.contains('open')) {
+                // Buka amplop
+                container.classList.add('open');
+                // Pemicu efek partikel
+                createParticleExplosion();
+            } else {
+                // Tutup amplop (jika diklik lagi)l
+                container.classList.remove('open');
+            }
+        }
+
+        function createParticleExplosion() {
+            const count = 30; // Jumlah partikel
+            for (let i = 0; i < count; i++) {
+                const particle = document.createElement('div');
+                particle.classList.add('particle');
+                
+                // Pilih bentuk acak
+                particle.innerHTML = particleShapes[Math.floor(Math.random() * particleShapes.length)];
+                
+                // Set ukuran acak
+                particle.style.fontSize = Math.random() * 15 + 10 + 'px';
+                
+                // Set arah ledakan acak menggunakan CSS Variable
+                // dx: -150px ke 150px, dy: -200px ke -50px (ke atas)
+                particle.style.setProperty('--dx', (Math.random() - 0.5) * 300 + 'px');
+                particle.style.setProperty('--dy', (Math.random() * -150 - 50) + 'px');
+
+                // Tambahkan ke container
+                container.appendChild(particle);
+
+                // Hapus elemen setelah animasi selesai agar tidak memberatkan memory
+                setTimeout(() => {
+                    particle.remove();
+                }, 1000);
+            }
+        }
+    </script>
+
+</body>
+</html>
